@@ -10,6 +10,7 @@ import * as config from 'config';
 import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { catchError, lastValueFrom, map } from 'rxjs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
@@ -20,6 +21,7 @@ import {
 import { httpErrors } from 'src/shares/exceptions';
 import { UserService } from '../user/user.service';
 import { User } from '../user/schemas/user.schema';
+import { LoginAppleDto } from './dto/login-apple.dto';
 import { LoginGoogleDto } from './dto/login-google.dto';
 import { LoginFacebookDto } from './dto/login-facebook.dto';
 import { UserGoogleInfoDto } from './dto/user-google-info.dto';
@@ -29,6 +31,8 @@ import { PayloadRefreshTokenDto } from './dto/payload-refresh-token.dto';
 import { ResponseRefreshTokenDto } from './dto/response-refresh-token.dto';
 import { PayloadAccessTokenDto } from 'src/shares/dtos/payload-access-token.dto';
 
+const appleJwksUrl = config.get<string>('apple.jwks');
+const appleIssuer = config.get<string>('apple.issuer');
 const baseZaloUrl = config.get<string>('zalo.base_api');
 const baseGoogleUrl = config.get<string>('google.base_api');
 const baseFacebookUrl = config.get<string>('facebook.graph_api');
@@ -219,8 +223,39 @@ export class AuthService {
     };
   }
 
-  async logInApple(loginDto: LoginGoogleDto): Promise<any> {
-    const { accessToken } = loginDto;
+  async logInApple(loginDto: LoginAppleDto): Promise<any> {
+    const { identityToken } = loginDto;
+    try {
+      const jwks = createRemoteJWKSet(
+        new URL('https://appleid.apple.com/auth/keys'),
+      );
+      const { payload } = await jwtVerify(identityToken, jwks, {
+        issuer: 'https://appleid.apple.com',
+        audience: ['com.goover.ai'],
+      });
+      const appleProfile = {
+        sub: payload.sub,
+        email: payload.email ?? null,
+        email_verified: payload.email_verified === 'true',
+        is_private_email: payload.is_private_email === 'true',
+      };
+      if (!appleProfile.sub) {
+        throw new ForbiddenException('Invalid Apple token payload');
+      }
+      const user = await this.userService.findOrCreateAppleUser(appleProfile);
+      const [accessToken_, refreshToken] = await Promise.all([
+        this.generateUserAccessToken(user['_id']),
+        this.generateUserRefreshToken(user['_id']),
+      ]);
+      return {
+        accessToken: accessToken_,
+        refreshToken,
+        iat: Date.now(),
+        exp: Date.now() + JWT_CONSTANTS.userAccessTokenExpiry,
+      };
+    } catch (error) {
+      throw new BadRequestException('Apple token invalid or expired');
+    }
   }
 
   async logInLINE(loginDto: LoginGoogleDto): Promise<any> {
@@ -262,41 +297,7 @@ export class AuthService {
 
   async logInX(loginDto: LoginGoogleDto): Promise<any> {
     const { accessToken } = loginDto;
-    const url = "https://api.twitter.com/2/me";
-    const userData = await lastValueFrom(
-      this.httpService
-        .get(url, {
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .pipe(
-          map((response) => {
-            return response.data || null;
-          }),
-        )
-        .pipe(
-          catchError((error) => {
-            console.log(error);
-            throw new BadRequestException(error.message);
-          }),
-        ),
-    );
-    console.log(userData)
-    // if (userData.error === 452) {
-    //   throw new BadRequestException(httpErrors.ZALO_TOKEN_INVALID_OR_EXPIRES);
-    // }
-    // const user = await this.userService.findOrCreateZaloUser(userData);
-    // const [accessToken_, refreshToken] = await Promise.all([
-    //   this.generateUserAccessToken(user['_id']),
-    //   this.generateUserRefreshToken(user['_id']),
-    // ]);
-    // return {
-    //   accessToken: accessToken_,
-    //   refreshToken,
-    //   iat: Date.now(),
-    //   exp: Date.now() + JWT_CONSTANTS.userAccessTokenExpiry,
-    // };
+    const url = 'https://api.twitter.com/2/me';
   }
 
   async logInKakaoTalk(loginDto: LoginGoogleDto): Promise<any> {

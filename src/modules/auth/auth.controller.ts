@@ -5,6 +5,7 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 
 import { UserService } from '../user/user.service';
 import { UserRtGuards } from './guards/user-rt.guard';
+import { LoginAppleDto } from './dto/login-apple.dto';
 import { LoginGoogleDto } from './dto/login-google.dto';
 import { LoginFacebookDto } from './dto/login-facebook.dto';
 import { UserAuth } from 'src/shares/decorators/http.decorators';
@@ -30,52 +31,46 @@ export class AuthController {
     return this.userService.findById(userId);
   }
 
-  // @Post('login-x')
-  // @ApiOperation({ summary: '[Auth] Login with X' })
-  // async logInX(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
-  //   return this.authService.logInX(loginDto);
-  // }
-
-  @Post('login-zalo')
-  @ApiOperation({ summary: '[Auth] Login with Zalo' })
-  async logInZalo(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
-    return this.authService.logInZalo(loginDto);
-  }
-
-  @Post('login-line')
-  @ApiOperation({ summary: '[Auth] Login with LINE' })
-  async logInLINE(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
-    return this.authService.logInLINE(loginDto);
-  }
-
-  // @Post('login-apple')
-  // @ApiOperation({ summary: '[Auth] Login with Apple' })
-  // async logInApple(
-  //   @Body() loginInstagramDto: LoginGoogleDto,
-  // ): Promise<ResponseLogin> {
-  //   return this.authService.logInGoogle(loginInstagramDto);
-  // }
-
-  @Post('login-google')
-  @ApiOperation({ summary: '[Auth] Login with Google' })
-  async logInGoogle(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
-    return this.authService.logInGoogle(loginDto);
-  }
-
-  @Post('login-facebook')
-  @ApiOperation({ summary: '[Auth] Login with Facebook' })
-  async loginFacebook(
-    @Body() loginDto: LoginFacebookDto,
-  ): Promise<ResponseLogin> {
-    return this.authService.loginFacebook(loginDto);
-  }
-
-  @Post('refresh-access-token')
+  @Post('refresh')
   @ApiOperation({ summary: '[Auth] Get new Access Token' })
   @UseGuards(UserRtGuards)
   async userRefreshAccessToken(
     @GetCurrentUser() user: PayloadRefreshTokenDto,
   ): Promise<ResponseRefreshTokenDto> {
     return this.authService.UserGetAccessToken(user);
+  }
+
+  @Post('social/zalo')
+  @ApiOperation({ summary: '[Auth] Login with Zalo' })
+  async logInZalo(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
+    return this.authService.logInZalo(loginDto);
+  }
+
+  @Post('social/line')
+  @ApiOperation({ summary: '[Auth] Login with LINE' })
+  async logInLINE(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
+    return this.authService.logInLINE(loginDto);
+  }
+
+  @Post('social/apple')
+  @ApiOperation({ summary: '[Auth] Login with Apple' })
+  async logInApple(
+    @Body() loginAppleDto: LoginAppleDto,
+  ): Promise<ResponseLogin> {
+    return this.authService.logInApple(loginAppleDto);
+  }
+
+  @Post('social/google')
+  @ApiOperation({ summary: '[Auth] Login with Google' })
+  async logInGoogle(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
+    return this.authService.logInGoogle(loginDto);
+  }
+
+  @Post('social/facebook')
+  @ApiOperation({ summary: '[Auth] Login with Facebook' })
+  async loginFacebook(
+    @Body() loginDto: LoginFacebookDto,
+  ): Promise<ResponseLogin> {
+    return this.authService.loginFacebook(loginDto);
   }
 }

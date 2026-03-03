@@ -74,3 +74,16 @@ apr_type:
 
 rpc:
  message: "JSON RPC"
+
+zalo:
+  base_api: ZALO_BASE_API
+
+apple:
+  jwks: APPLE_JWKS
+  issuer: APPLE_ISSUER
+
+facebook:
+  graph_api: FACEBOOK_GRAPH_API
+
+google:
+  base_api: GOOGLE_BASE_API

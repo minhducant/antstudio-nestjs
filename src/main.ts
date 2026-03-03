@@ -51,7 +51,7 @@ async function bootstrap(): Promise<void> {
     prefix: '/dashboard/',
   });
   await app.register(fastifyRateLimit, {
-    max: 10,
+    max: 200,
     timeWindow: '1 minute',
     errorResponseBuilder: (req, context) => ({
       statusCode: 429,

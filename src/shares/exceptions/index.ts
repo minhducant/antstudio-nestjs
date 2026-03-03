@@ -191,6 +191,12 @@ export const httpErrors = {
     code: 'ZALO_00000',
   },
 
+  // APPLE
+  APPLE_TOKEN_INVALID_OR_EXPIRES: {
+    message: 'identityToken is invalid or expires.',
+    code: 'APPLE_00000',
+  },
+
   // CATEGORY
   CATEGORY_EXISTED: {
     message: 'Category already existed.',
