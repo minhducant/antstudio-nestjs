@@ -1,4 +1,4 @@
-import { Get, Query, Controller } from '@nestjs/common';
+import { Get, Query, Controller, Post } from '@nestjs/common';
 import {
   ApiTags,
   ApiQuery,
@@ -50,7 +50,14 @@ export class ToolController {
   //   return this.toolService.fetchKQSX(query);
   // }
 
-  @Get('fetch')
+
+  @Get('exchange')
+  @ApiOperation({ summary: '[Tool] Get Exchange Rate VN' })
+  async fetchExchangeRate(@Query() query: ExchangeRateQueryDto) {
+    return this.toolService.fetchExchangeRate(query);
+  }
+
+  @Post('fetch')
   @ApiOperation({ summary: '[Tool] Fetch API response from URL' })
   @ApiQuery({
     name: 'token',
@@ -60,13 +67,8 @@ export class ToolController {
     return await this.toolService.fetchApiResponse(url, token);
   }
 
-  @Get('exchange')
-  @ApiOperation({ summary: '[Tool] Get Exchange Rate list Vietnam' })
-  async fetchExchangeRate(@Query() query: ExchangeRateQueryDto) {
-    return this.toolService.fetchExchangeRate(query);
-  }
 
-  @Get('telegram')
+  @Post('telegram')
   @ApiOperation({ summary: '[Tool] Send Message to Telegram Chatbot' })
   async logTelegram(@Query() query: LogTelegramDto) {
     return this.toolService.sendPaymentNotificationMessage(query.message);

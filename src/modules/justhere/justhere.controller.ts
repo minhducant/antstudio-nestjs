@@ -28,7 +28,7 @@ export class NoteController {
     return this.justhereService.find(query, userId);
   }
 
-  @Post('/create')
+  @Post()
   @ApiBearerAuth()
   @ApiOperation({
     summary: '[Just Here] Create Just Here',
@@ -41,7 +41,7 @@ export class NoteController {
   }
 
   @ApiBearerAuth()
-  @Post('/test/cron')
+  @Post('run-cron')
   @ApiQuery({
     name: 'days',
     required: false,

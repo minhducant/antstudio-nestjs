@@ -23,7 +23,7 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('current-user')
+  @Get('me')
   @UserAuth()
   @ApiBearerAuth()
   @ApiOperation({ summary: '[Auth] Get User Information' })
