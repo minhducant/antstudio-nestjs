@@ -5,5 +5,5 @@ export class LoginAppleDto {
   @ApiProperty({ description: 'Apple identityToken' })
   @IsNotEmpty()
   @IsString()
-  readonly identityToken: string;
+  identityToken: string;
 }

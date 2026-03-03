@@ -5,5 +5,5 @@ export class LoginFacebookDto {
   @ApiProperty({ description: 'Facebook access_token' })
   @IsNotEmpty()
   @IsString()
-  readonly accessToken: string;
+  accessToken: string;
 }
