@@ -1,16 +1,26 @@
-FROM node:16-alpine as builder
-WORKDIR /home/node/app
-COPY ./package.json ./
-COPY ./yarn.lock ./
-RUN chown -R node:node /home/node/app
-RUN yarn install
-COPY . .
-RUN yarn build
-RUN rm -r node_modules
-RUN yarn install --frozen-lockfile --production
+FROM node:20-alpine AS builder
 
-FROM node:16-alpine as production
-WORKDIR /home/node/app
-COPY --from=builder /home/node/app ./
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 3000
+
 CMD ["node", "dist/main.js"]

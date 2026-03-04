@@ -1,18 +1,40 @@
-# Use root/example as user/password credentials
-version: '3.1'
+version: "3.9"
+
 services:
   mongodb:
-    container_name: spendsync-database-mongo
-    image: mongo
-    restart: always
+    image: mongo:7
+    container_name: antstudio-mongodb
+    restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - antstudio-network
 
   redis:
-    image: 'redis:6-alpine'
-    container_name: redis-spendsync
+    image: redis:7-alpine
+    container_name: antstudio-redis
+    restart: unless-stopped
     ports:
-      - 6379:6379
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - antstudio-network
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  antstudio-network:
