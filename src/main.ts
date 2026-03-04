@@ -91,11 +91,16 @@ async function bootstrap(): Promise<void> {
     },
   });
 
-  await app.listen(port).then(async () => {
-    const logger = app.get(Logger);
-    logger.debug(
-      `Application is running on: ${await app.getUrl()}/${prefix}/docs/#/`,
-    );
-  });
+  await app
+    .listen({
+      port,
+      host: '0.0.0.0',
+    })
+    .then(async () => {
+      const logger = app.get(Logger);
+      logger.debug(
+        `Application is running on: ${await app.getUrl()}/${prefix}/docs/#/`,
+      );
+    });
 }
 bootstrap();

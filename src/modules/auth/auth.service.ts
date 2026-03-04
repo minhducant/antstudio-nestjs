@@ -231,7 +231,7 @@ export class AuthService {
       );
       const { payload } = await jwtVerify(identityToken, jwks, {
         issuer: 'https://appleid.apple.com',
-        audience: ['com.goover.ai'],
+        audience: ['com.antstudio.justhere.app'],
       });
       const appleProfile = {
         sub: payload.sub,
