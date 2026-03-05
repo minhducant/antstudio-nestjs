@@ -45,7 +45,7 @@ export class DebtController {
     return this.debtService.findDebtById(id);
   }
 
-  @Post('/create')
+  @Post()
   @ApiBearerAuth()
   @ApiOperation({
     summary: '[Debt] Create debt',
@@ -66,7 +66,7 @@ export class DebtController {
     await this.debtService.deleteDebt(id);
   }
 
-  @Patch('/change-status')
+  @Patch('/status')
   @ApiBearerAuth()
   @ApiOperation({
     summary: '[Debt] Change status debt',

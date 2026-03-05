@@ -67,18 +67,6 @@ export class NoteController {
     await this.noteService.createNote(body, userId);
   }
 
-  // @Post('/create/many')
-  // @ApiBearerAuth()
-  // @ApiOperation({
-  //   summary: '[Note] Create 5 million notes',
-  // })
-  // async createBulkNotes(
-  //   @Body() body: CreateNoteDto,
-  //   @UserID() userId: string,
-  // ): Promise<void> {
-  //   await this.noteService.createBulkNotes(body, userId);
-  // }
-
   @Get('split/:id')
   @ApiBearerAuth()
   @ApiOperation({
@@ -86,6 +74,24 @@ export class NoteController {
   })
   async splitExpenses(@Param() { id }: IdDto) {
     return this.noteService.splitExpenses(id);
+  }
+
+  @Patch('/member')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[Note] Change member',
+  })
+  async changeMember(@Body() body: ChangeMemberDto): Promise<void> {
+    await this.noteService.changeMember(body);
+  }
+
+  @Patch('/status')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[Note] Change status note',
+  })
+  async changeStatusById(@Body() body: ChangeStatus): Promise<void> {
+    await this.noteService.changeStatusById(body);
   }
 
   @Patch('/add-expense')
@@ -106,21 +112,4 @@ export class NoteController {
     await this.noteService.editExpense(body);
   }
 
-  @Patch('/change-member')
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: '[Note] Change member',
-  })
-  async changeMember(@Body() body: ChangeMemberDto): Promise<void> {
-    await this.noteService.changeMember(body);
-  }
-
-  @Patch('/change-status')
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: '[Note] Change status note',
-  })
-  async changeStatusById(@Body() body: ChangeStatus): Promise<void> {
-    await this.noteService.changeStatusById(body);
-  }
 }
