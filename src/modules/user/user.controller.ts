@@ -1,5 +1,5 @@
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Post, Get, Body, Query, Param } from '@nestjs/common';
+import { Controller, Get, Delete, Query, Param } from '@nestjs/common';
 
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
@@ -24,6 +24,14 @@ export class UserController {
     return this.userService.findAll(query, userId);
   }
 
+  @Get('me')
+  @ApiBearerAuth()
+  @UserAuth()
+  @ApiOperation({ summary: '[User] Get my profile' })
+  async currentUser(@UserID() userId: string): Promise<User> {
+    return this.userService.findById(userId);
+  }
+
   @Get('/all')
   @ApiBearerAuth()
   @ApiOperation({ summary: '[User] Get all user' })
@@ -42,5 +50,15 @@ export class UserController {
   })
   async findOne(@Param() { id }: IdDto): Promise<User> {
     return this.userService.findById(id);
+  }
+
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UserAuth()
+  @ApiOperation({
+    summary: '[User] Delete user by id',
+  })
+  async delete(@Param() { id }: IdDto): Promise<void> {
+    return this.userService.delete(id);
   }
 }

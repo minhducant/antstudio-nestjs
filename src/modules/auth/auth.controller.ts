@@ -23,14 +23,6 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('me')
-  @UserAuth()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '[Auth] Get User Information' })
-  async currentUser(@UserID() userId: string): Promise<User> {
-    return this.userService.findById(userId);
-  }
-
   @Post('refresh')
   @ApiOperation({ summary: '[Auth] Get new Access Token' })
   @UseGuards(UserRtGuards)

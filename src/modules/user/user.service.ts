@@ -309,4 +309,11 @@ export class UserService {
       is_verify: true,
     });
   }
+
+  async delete(id: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(id, {
+      is_deleted: true,
+      deleted_at: new Date(),
+    });
+  }
 }
