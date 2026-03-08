@@ -9,6 +9,7 @@ import { LoginAppleDto } from './dto/login-apple.dto';
 import { LoginGoogleDto } from './dto/login-google.dto';
 import { LoginFacebookDto } from './dto/login-facebook.dto';
 import { UserAuth } from 'src/shares/decorators/http.decorators';
+import { LoginAccessTokenDto } from './dto/login-access-token.dto';
 import { UserID } from 'src/shares/decorators/get-user-id.decorator';
 import { ResponseLogin } from 'src/modules/auth/dto/response-login.dto';
 import { PayloadRefreshTokenDto } from './dto/payload-refresh-token.dto';
@@ -34,13 +35,17 @@ export class AuthController {
 
   @Post('social/zalo')
   @ApiOperation({ summary: '[Auth] Login with Zalo' })
-  async logInZalo(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
+  async logInZalo(
+    @Body() loginDto: LoginAccessTokenDto,
+  ): Promise<ResponseLogin> {
     return this.authService.logInZalo(loginDto);
   }
 
   @Post('social/line')
   @ApiOperation({ summary: '[Auth] Login with LINE' })
-  async logInLINE(@Body() loginDto: LoginGoogleDto): Promise<ResponseLogin> {
+  async logInLINE(
+    @Body() loginDto: LoginAccessTokenDto,
+  ): Promise<ResponseLogin> {
     return this.authService.logInLINE(loginDto);
   }
 

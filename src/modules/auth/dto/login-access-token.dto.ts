@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class LoginGoogleDto {
-  @ApiProperty({ description: 'Google ID token', required: true })
+export class LoginAccessTokenDto {
+  @ApiProperty({ description: 'Access Token', required: true })
   @IsNotEmpty()
   @IsString()
-  idToken: string;
+  accessToken: string;
 }

@@ -25,6 +25,7 @@ import { LoginAppleDto } from './dto/login-apple.dto';
 import { LoginGoogleDto } from './dto/login-google.dto';
 import { LoginFacebookDto } from './dto/login-facebook.dto';
 import { UserGoogleInfoDto } from './dto/user-google-info.dto';
+import { LoginAccessTokenDto } from './dto/login-access-token.dto';
 import { UserFacebookInfoDto } from './dto/user-facebook-info.dto';
 import { ResponseLogin } from 'src/modules/auth/dto/response-login.dto';
 import { PayloadRefreshTokenDto } from './dto/payload-refresh-token.dto';
@@ -154,16 +155,12 @@ export class AuthService {
   }
 
   async logInGoogle(loginGoogleDto: LoginGoogleDto): Promise<any> {
-    const { accessToken } = loginGoogleDto;
-    const url = `${baseGoogleUrl}userinfo?access_token=${accessToken}`;
+    const { idToken } = loginGoogleDto;
+    const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`;
     const userData: UserGoogleInfoDto = await lastValueFrom(
       this.httpService
         .get(url)
-        .pipe(
-          map((response) => {
-            return response || null;
-          }),
-        )
+        .pipe(map((response) => response.data || null))
         .pipe(
           catchError((error) => {
             throw new BadRequestException(error.message);
@@ -186,7 +183,7 @@ export class AuthService {
     };
   }
 
-  async logInZalo(loginDto: LoginGoogleDto): Promise<any> {
+  async logInZalo(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
     const url = `${baseZaloUrl}me?fields=id,name,picture`;
     const userData = await lastValueFrom(
@@ -258,7 +255,7 @@ export class AuthService {
     }
   }
 
-  async logInLINE(loginDto: LoginGoogleDto): Promise<any> {
+  async logInLINE(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
     const url = 'https://api.line.me/v2/profile';
     const userData = await lastValueFrom(
@@ -295,29 +292,29 @@ export class AuthService {
     };
   }
 
-  async logInX(loginDto: LoginGoogleDto): Promise<any> {
+  async logInX(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
     const url = 'https://api.twitter.com/2/me';
   }
 
-  async logInKakaoTalk(loginDto: LoginGoogleDto): Promise<any> {
+  async logInKakaoTalk(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
     const url = `https://kapi.kakao.com/v1/api/talk/profile`;
   }
 
-  async logInWhatsApp(loginDto: LoginGoogleDto): Promise<any> {
+  async logInWhatsApp(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
   }
 
-  async logInWeChat(loginDto: LoginGoogleDto): Promise<any> {
+  async logInWeChat(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
   }
 
-  async logInSnapchat(loginDto: LoginGoogleDto): Promise<any> {
+  async logInSnapchat(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
   }
 
-  async logInTwitter(loginDto: LoginGoogleDto): Promise<any> {
+  async logInTwitter(loginDto: LoginAccessTokenDto): Promise<any> {
     const { accessToken } = loginDto;
   }
 }

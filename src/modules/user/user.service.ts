@@ -173,7 +173,7 @@ export class UserService {
   }
 
   async findOrCreateGoogleUser(profile: UserGoogleInfoDto): Promise<User> {
-    const { sub, picture, given_name, family_name, email } = profile.data;
+    const { sub, picture, given_name, family_name, email } = profile;
     const user_id = this.generateUserId();
     const user = await this.userModel.findOne({
       google_id: sub,
